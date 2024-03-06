@@ -9,6 +9,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,42 +22,65 @@ import java.util.stream.Collectors;
 public class StudentController {
 
     @PostMapping("/student")
-    public ResponseEntity<?> addStudent(@CookieValue(required = false) String students, @RequestBody Student student) throws JsonProcessingException {
+    public ResponseEntity<?> addStudent(@CookieValue(required = false) String students, @RequestBody Student student) throws JsonProcessingException, UnsupportedEncodingException {
         //@RequestBody JSON
+        ObjectMapper objectMapper = new ObjectMapper();// ObjectMapper -> Gson
         List<Student> studentList = new ArrayList<>();
-        int lastId = 0;
+        // 1.비어있는 studentList생성
+        int lastId = 0;//id자동증가
+
 
         System.out.println(students);
 
         if(students != null) {
+            // 쿠키가 null이면
             if(!students.isBlank()) {
-                ObjectMapper studentsCookie = new ObjectMapper();
-                studentList = studentsCookie.readValue(students, List.class);
+                // 문자열이 비어있으면 (키값은 있는데 비었을 수도)
+                // for문 위 objectMapper 옮김
+                for(Object object : objectMapper.readValue(students, List.class)) {
+                    Map<String, Object> studentMap = (Map<String, Object>) object;
+                    studentList.add(objectMapper.convertValue(studentMap, Student.class));
+                }
                 lastId = studentList.get(studentList.size() - 1).getStudentId();
             }
+            //리스트로 변환하면 object로 (json자체가 리스트) jsonList를 변환해버리면 student객체 형태로 들어있으면 안에 Obejct형식
+            // Object형식을 가져와서 각각을 Map(downcasting) 이 Map을 student객체로 변환해서 List로 변환해서 빼야된다.
         }
 
 
         student.setStudentId(lastId + 1);
+        // 걸리지 않았으면 student 요청 때 보내준 JSON 데이터(@RequestBody Student student name은 있는데 id는 x)
+        // 0+1
         studentList.add(student);
+        // 비어있는 리스트 학생추가
 
-        ObjectMapper newStudentList = new ObjectMapper();
-        String newStudents = newStudentList.writeValueAsString(studentList);
-
-        System.out.println(students);
+        
+        String studentListJson = objectMapper.writeValueAsString(studentList);
+                                //객체를 JSON  tojson
+        // 리스트 통째로 json
+        System.out.println(studentListJson); //잘들어갔는지 출력
+        
         ResponseCookie responseCookie = ResponseCookie
-                .from("test", "test_data")
+                //쿠키 객체 빌더
+                // from( ,studentListJson) ""포함문자열로 들어감
+                .from("students", URLEncoder.encode(studentListJson, "UTF-8")) // %5b 이런형식으로 들어감
+                // 쿠키의 키값 변수명 String students 똑같이 (키값 변수명)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(60)
+                // 모든영역 /
+                // localhost:8080/auth 인증하는 부분에서만 사용하겠다. /auth 이경로 안에서만
+                .maxAge(60) // 1이 분 60 한시간 쿠키 들어가고 나가고 60분 (현재시간 기준
                 //.domain("localhost:8080")
-                .build();
+                .build(); // 쿠키객체 생성
         // from 쿠키의 이름
         
-        
+
         // (")문자 저장 x
-        return ResponseEntity.created(null).header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(student);
+        return ResponseEntity
+                .created(null) // 201번 created 포스트요청 때 생성완료 했다. null을 했는데 추가작업을 하고 넘어감 보통 url
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString()).
+                body(student);
     }
 
     @GetMapping("/student")

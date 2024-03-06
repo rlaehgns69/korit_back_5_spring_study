@@ -1,0 +1,16 @@
+학생 추가 조회
+
+Controller
+    - StudentRestController
+
+Service
+    - StudentService (interface)
+        - getStudnetList()
+        - getStudent(int index)
+    - StudentServiceImpl(class)
+
+Repository
+    - StudentRepository(interface)
+        - getStudentListAll()
+    - StudentRepository(class)
+        - studentList = ["전주환", "서창현", "예홍렬"]
