@@ -1,7 +1,7 @@
 학생 추가 조회
 
 Controller
-    - StudentRestController
+    - StudentRestController - 응답: OK [{"name","전주환"}, {"name","서창현"}, {"name","예홍렬"}];
 
 Service
     - StudentService (interface)

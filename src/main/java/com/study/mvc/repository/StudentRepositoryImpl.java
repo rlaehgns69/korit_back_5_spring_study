@@ -1,23 +1,20 @@
 package com.study.mvc.repository;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.*;
 
+@Repository
+public class StudentRepositoryImpl implements StudentRepository   {
+    private List<String> studentList = List.of("전주환","서창현","예홍렬");// db연결안하기 때문에 데이터저장
 
-public class StudentRepositoryImpl implements StudentRepository {
-    public List<String> studentList = List.of("주환", "칭현", "홍렬");
     @Override
-    public Map<String, String> getStudentListAll() {
-        Map<String, String> studentMap = new HashMap<>();
-        for(int i = 0; i < studentList.size()+1; i++) {
-
-        }
-
+    public List<String> getStudentListAll() {
+        return studentList;
     }
 
     @Override
     public String findStudentNameByIndex(int index) {
-
-        System.out.println(index + "번 학생이름: "+ studentList.get(index));
-        return "Hello";
+        return studentList.get(index);
     }
 }

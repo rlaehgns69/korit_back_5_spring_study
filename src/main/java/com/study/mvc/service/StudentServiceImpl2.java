@@ -1,10 +1,9 @@
 package com.study.mvc.service;
 
+import com.study.mvc.dto.StudentExDto;
 import com.study.mvc.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,24 +11,25 @@ import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService  {
+public class StudentServiceImpl2 implements StudentService  {
     private final StudentRepository studentRepository;// private final ioc에서 RequiredArgsConstructor
 
     @Override
+    //List return 자료형의 List ? map dto
     public List<?> getStudentList() {
-        List<Map<String, String>> studentMapList = new ArrayList<>();
+        List<StudentExDto> studentDtoList = new ArrayList<>();
         List<String> studentList = studentRepository.getStudentListAll();
 
         for(String studentName: studentList) {
-            studentMapList.add(Map.of("name", studentName));
+            studentDtoList.add(new StudentExDto(studentName));
         }
 
-        return studentMapList;
+        return studentDtoList;
     }
 
     @Override
     public Object getStudent(int index) {
         String studentName = studentRepository.findStudentNameByIndex(index);
-        return Map.of("name", studentName);
+        return new StudentExDto(studentName);
     }
 }
