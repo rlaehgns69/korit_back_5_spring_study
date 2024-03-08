@@ -1,11 +1,12 @@
 학생 추가 조회
 
 Controller
-    - StudentRestController - 응답: OK [{"name","전주환"}, {"name","서창현"}, {"name","예홍렬"}];
-
+    - StudentRestController
+        @GetMapping("/ex/students") - 응답: OK [{"name","전주환"}, {"name","서창현"}, {"name","예홍렬"}];
+        @GetMapping("/ex/student/1") - 응답: OK {"name", "전주환"};
 Service
     - StudentService (interface)
-        - getStudnetList()
+        - getStudentList()
         - getStudent(int index)
     - StudentServiceImpl(class)
 

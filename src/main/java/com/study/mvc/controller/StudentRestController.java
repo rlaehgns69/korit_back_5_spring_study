@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StudentRestController {
     @Autowired
-    @Qualifier("studentServiceImpl")
+    @Qualifier("studentServiceImpl2")
 
     private StudentService studentService;
 
