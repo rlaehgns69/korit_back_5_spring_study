@@ -1,5 +1,6 @@
 package com.study.mvc.controller;
 
+import com.study.mvc.aop.annotation.TimeAspect;
 import com.study.mvc.dto.DBStudyReqDto;
 import com.study.mvc.service.DBStudyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 public class DBController {
     @Autowired
     private DBStudyService dbStudyService;
+
+    
+    // *(모든 리턴 타입) com.study.mvc.. *Controller .insert() .. 매개변수 상관없다. 이형식인 aop적용
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody DBStudyReqDto dbStudyReqDto) {
 
@@ -28,7 +32,7 @@ public class DBController {
     public ResponseEntity<?> selectStudy(@RequestParam String name) {
         return ResponseEntity.ok(dbStudyService.findStudyByName(name));
     }
-
+    //@TimeAspect
     @GetMapping("/select/studys")
     public ResponseEntity<?> selectStudyAll() {
         return ResponseEntity.ok(dbStudyService.findAll());
